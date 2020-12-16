@@ -1,0 +1,122 @@
+<template>
+<div>
+  <div class="header">
+    <a-page-header title="投票结果" sub-title="微助教" style="background: lavender">
+      <a-avatar v-if="!logIsIn" slot="extra">未登录</a-avatar>
+      <a-avatar v-if="logIsIn" slot="extra" style="background: green">已登录</a-avatar>
+    </a-page-header>
+  </div>
+  <div class="charts">
+    <div id="chartPie" class="pie-wrap"></div>
+  </div>
+</div>
+</template>
+
+<script>
+import store from '@/store'
+import * as echarts from 'echarts'
+require('echarts/theme/macarons2')// 引入主题
+export default {
+  name: 'voteDetail',
+  store,
+  data () {
+    return {
+      voteTitle: '测试用例',
+      voteData: [
+        {
+          value: 335,
+          name: '选项一'
+        },
+        {
+          value: 310,
+          name: '选项二'
+        },
+        {
+          value: 234,
+          name: '选项三'
+        },
+        {
+          value: 135,
+          name: '选项四'
+        },
+        {
+          value: 1548,
+          name: '选项五'
+        },
+        {
+          value: 988,
+          name: '选项六'
+        }
+      ],
+      chartPie: null
+    }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.drawPieChart()
+    })
+  },
+  created () {
+    document.title = '投票详情'
+    const paramId = this.$route.query.id
+    this.$message.info(paramId)
+  },
+  methods: {
+    drawPieChart () {
+      const mylabel = {
+        show: true,
+        position: 'right',
+        offset: [30, 40],
+        formatter: '{b} : {c} ({d}%)',
+        color: '#333',
+        fontSize: 18
+      }
+      this.chartPie = echarts.init(document.getElementById('chartPie'), 'macarons')
+      this.chartPie.setOption({
+        title: {
+          text: '选项分布',
+          subtext: this.voteTitle,
+          x: 'center'
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        legend: {
+          data: this.voteData[name],
+          left: 'center',
+          top: 'bottom',
+          orient: 'horizontal',
+          icon: 'circle'
+        },
+        series: [
+          {
+            name: '选项',
+            type: 'pie',
+            radius: ['50%', '70%'],
+            center: ['50%', '50%'],
+            data: this.voteData,
+            animationEasing: 'cubicInOut',
+            animationDuration: 600,
+            emphasis: {
+              label: mylabel
+            }
+          }
+        ]
+      })
+    }
+  },
+  computed: {
+    logIsIn () {
+      return store.state.isLoggedIn
+    }
+  }
+}
+</script>
+
+<style lang='less' scoped>
+.pie-wrap{
+  width:100%;
+  height:400px;
+}
+</style>

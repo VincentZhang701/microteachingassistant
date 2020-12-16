@@ -1,0 +1,191 @@
+<template>
+  <div>
+    <div class="header">
+      <a-page-header title="发布投票" sub-title="微助教" style="background: lavender">
+        <a-avatar v-if="!logIsIn" slot="extra">未登录</a-avatar>
+        <a-avatar v-if="logIsIn" slot="extra" style="background: green">已登录</a-avatar>
+      </a-page-header>
+    </div>
+    <div>
+      <a-form :form="form" @submit="handleSubmit">
+        <a-form-item label="主题" :required="false" v-bind="formItemLayout">
+          <a-input
+            v-decorator="[
+          `theme`,
+          {
+            validateTrigger: ['change', 'blur'],
+            rules: [
+              {
+                required: true,
+                whitespace: true,
+                message: '主题不能为空',
+              },
+            ],
+          },
+        ]"
+            style="width: 60%;margin-right: 8px"
+          />
+        </a-form-item>
+        <a-form-item
+          v-for="(k, index) in form.getFieldValue('keys')"
+          :key="k"
+          v-bind="index === 0 ? formItemLayout : formItemLayoutWithOutLabel"
+          :label="index === 0 ? '选项：' : ''"
+          :required="false"
+        >
+          <a-input
+            v-decorator="[
+          `names[${k}]`,
+          {
+            validateTrigger: ['change', 'blur'],
+            rules: [
+              {
+                required: true,
+                whitespace: true,
+                message: '选项不能为空，请填写该投票选项或删除它',
+              },
+            ],
+          },
+        ]"
+            style="width: 60%; margin-right: 8px"
+          />
+          <a-icon
+            v-if="form.getFieldValue('keys').length > 1"
+            class="dynamic-delete-button"
+            type="minus-circle-o"
+            :disabled="form.getFieldValue('keys').length === 1"
+            @click="() => remove(k)"
+          />
+        </a-form-item>
+        <a-form-item v-bind="formItemLayoutWithOutLabel">
+          <a-button type="dashed" style="width: 60%" @click="add">
+            <a-icon type="plus" /> Add field
+          </a-button>
+        </a-form-item>
+        <a-form-item v-bind="formItemLayoutWithOutLabel">
+          <a-button type="primary" html-type="submit">
+            Submit
+          </a-button>
+        </a-form-item>
+      </a-form>
+    </div>
+  </div>
+</template>
+
+<script>
+import store from '@/store'
+import moment from 'moment'
+let id = 0
+export default {
+  name: 'openVote',
+  store,
+  computed: {
+    logIsIn () {
+      return store.state.isLoggedIn
+    }
+  },
+  data () {
+    return {
+      formItemLayout: {
+        labelCol: {
+          xs: { span: 24 },
+          sm: { span: 4 }
+        },
+        wrapperCol: {
+          xs: { span: 24 },
+          sm: { span: 20 }
+        }
+      },
+      formItemLayoutWithOutLabel: {
+        wrapperCol: {
+          xs: { span: 24, offset: 0 },
+          sm: { span: 20, offset: 4 }
+        }
+      }
+    }
+  },
+  created () {
+    document.title = '发布投票'
+  },
+  beforeCreate () {
+    this.form = this.$form.createForm(this, { name: 'vote_form' })
+    this.form.getFieldDecorator('keys', { initialValue: [], preserve: true })
+  },
+  methods: {
+    remove (k) {
+      const { form } = this
+      // can use data-binding to get
+      const keys = form.getFieldValue('keys')
+      // We need at least one passenger
+      if (keys.length === 1) {
+        return
+      }
+
+      // can use data-binding to set
+      form.setFieldsValue({
+        keys: keys.filter(key => key !== k)
+      })
+    },
+    add () {
+      const { form } = this
+      // can use data-binding to get
+      const keys = form.getFieldValue('keys')
+      const nextKeys = keys.concat(id++)
+      // can use data-binding to set
+      // important! notify form to detect changes
+      form.setFieldsValue({
+        keys: nextKeys
+      })
+    },
+    handleSubmit (e) {
+      e.preventDefault()
+      this.form.validateFields(async (err, values) => {
+        if (!err) {
+          // const postData = {
+          //   vote: values.theme,
+          //   tid: 2,
+          //   options: values.names
+          // }
+          const postData = {
+            options: [],
+            vote: {
+              tid: 2,
+              theme: values.theme,
+              releaseTime: moment(Date.now()).format('yyyy-MM-DD') + 'T' + moment(Date.now()).format('HH:mm:ss') + '.000'
+            }
+          }
+          const { keys, names } = values
+          let optionList = []
+          optionList = keys.map(key => names[key])
+          for (let i = 0; i < optionList.length; i++) {
+            postData.options.push({
+              choice: optionList[i]
+            })
+          }
+          const res = await this.$Http.createVote(postData, {})
+          console.log('Received values of form: ', postData)
+          console.log(res)
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+.dynamic-delete-button {
+  cursor: pointer;
+  position: relative;
+  top: 4px;
+  font-size: 24px;
+  color: #999;
+  transition: all 0.3s;
+}
+.dynamic-delete-button:hover {
+  color: #777;
+}
+.dynamic-delete-button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+</style>
