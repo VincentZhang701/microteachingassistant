@@ -22,44 +22,36 @@ export default {
   data () {
     return {
       voteTitle: '测试用例',
-      voteData: [
-        {
-          value: 335,
-          name: '选项一'
-        },
-        {
-          value: 310,
-          name: '选项二'
-        },
-        {
-          value: 234,
-          name: '选项三'
-        },
-        {
-          value: 135,
-          name: '选项四'
-        },
-        {
-          value: 1548,
-          name: '选项五'
-        },
-        {
-          value: 988,
-          name: '选项六'
-        }
-      ],
+      voteData: [],
       chartPie: null
     }
   },
   mounted () {
-    this.$nextTick(() => {
-      this.drawPieChart()
-    })
+    // this.$nextTick(() => {
+    //   this.drawPieChart()
+    // })
   },
-  created () {
+  async created () {
     document.title = '投票详情'
     const paramId = this.$route.query.id
     this.$message.info(paramId)
+    let res = []
+    res = await this.$Http.getVoteDetail(paramId, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    for (let i = 0; i < res.length; i++) {
+      this.voteData.push({
+        name: res[i].choiceName,
+        value: res[i].count
+      })
+    }
+    console.log(res)
+    console.log(this.voteData)
+    this.$nextTick(() => {
+      this.drawPieChart()
+    })
   },
   methods: {
     drawPieChart () {

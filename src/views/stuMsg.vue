@@ -15,22 +15,26 @@
     <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" @submit="handleSubmit">
       <a-form-item v-if="!isAnonymous" label="你的名字">
         <a-input
-          v-decorator="['stuName',{ rules: [{ required: true, message: 'Please input your note!' }] }]"
+          v-decorator="['stuName',{ rules: [{ required: true, message: '请输入你的姓名!' }] }]"
         />
       </a-form-item>
       <a-form-item label="老师">
-        <a-input
-          v-decorator="['teacherName',{ rules: [{ required: true, message: 'Please input your note!' }] }]"
-        />
+        <a-select style="width: 120px"
+          v-decorator="['teacherName',{ rules: [{ required: true, message: '请选择老师!' }] }]"
+        >
+          <a-select-option v-for="teacherN in teacherList" :key="teacherN">
+            {{ teacherN }}
+          </a-select-option>
+        </a-select>
       </a-form-item>
       <a-form-item label="留言">
         <a-input
-          v-decorator="['msg',{ rules: [{ required: true, message: 'Please input your note!' }] }]"
+          v-decorator="['msg',{ rules: [{ required: true, message: '请留言!' }] }]"
         />
       </a-form-item>
       <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
         <a-button type="primary" html-type="submit">
-          Submit
+          留言
         </a-button>
       </a-form-item>
     </a-form>
@@ -39,14 +43,28 @@
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
   name: 'stuMsg',
   data () {
     return {
       formLayout: 'horizontal',
       isAnonymous: true,
-      form: this.$form.createForm(this, { name: 'coordinated' })
+      form: this.$form.createForm(this, { name: 'coordinated' }),
+      teacherList: [],
+      teacherKP: []
     }
+  },
+  async created () {
+    const res = await this.$Http.getTeacherList()
+    this.teacherList = []
+    this.teacherKP = []
+    for (let i = 0; i < res.length; i++) {
+      this.teacherList.push(res[i].name)
+      this.teacherKP[res[i].name] = res[i].id
+    }
+    console.log(res)
   },
   methods: {
     onChange (e) {
@@ -54,9 +72,23 @@ export default {
     },
     handleSubmit (e) {
       e.preventDefault()
-      this.form.validateFields((err, values) => {
+      this.form.validateFields(async (err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values)
+          const postData = {
+            tid: this.teacherKP[values.teacherName],
+            sender: null,
+            sendTime: moment(Date.now()).format('yyyy-MM-DD') + 'T' + moment(Date.now()).format('HH:mm:ss') + '.000',
+            etitle: values.msg
+          }
+          console.log(postData)
+          if (this.isAnonymous) {
+            postData.sender = '匿名'
+          } else {
+            postData.sender = values.stuName
+          }
+          const res = await this.$Http.stuMsg(postData)
+          console.log('Received values of form: ', postData)
+          console.log(res)
         }
       })
     }

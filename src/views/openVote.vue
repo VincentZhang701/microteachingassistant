@@ -59,12 +59,12 @@
         </a-form-item>
         <a-form-item v-bind="formItemLayoutWithOutLabel">
           <a-button type="dashed" style="width: 60%" @click="add">
-            <a-icon type="plus" /> Add field
+            <a-icon type="plus" /> 选项
           </a-button>
         </a-form-item>
         <a-form-item v-bind="formItemLayoutWithOutLabel">
           <a-button type="primary" html-type="submit">
-            Submit
+            提交
           </a-button>
         </a-form-item>
       </a-form>
@@ -149,7 +149,7 @@ export default {
           const postData = {
             options: [],
             vote: {
-              tid: 2,
+              tid: store.state.teacherTID,
               theme: values.theme,
               releaseTime: moment(Date.now()).format('yyyy-MM-DD') + 'T' + moment(Date.now()).format('HH:mm:ss') + '.000'
             }

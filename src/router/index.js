@@ -69,6 +69,11 @@ const routes = [
     path: '/vote',
     name: 'vote',
     component: () => import('../views/stuVote')
+  },
+  {
+    path: '/myMsg',
+    name: 'myMsg',
+    component: () => import('../views/teacherMsg')
   }
 ]
 

@@ -41,11 +41,19 @@ const myApi = {
   },
   getVoteDetail: {
     method: 'post',
-    url: '/Vote/findOne'
+    url: '/Vote_Student/getOptionCounts'
   },
   getVoteList: {
     method: 'post',
     url: '/Vote/findVoteByTID'
+  },
+  getTeacherList: {
+    method: 'get',
+    url: '/Teacher/findAll'
+  },
+  getVoteOptions: {
+    method: 'post',
+    url: '/VoteOption/findOneVoteOptions'
   }
 }
 export default myApi

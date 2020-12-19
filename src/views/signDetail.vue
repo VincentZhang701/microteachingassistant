@@ -32,15 +32,13 @@
 
 <script>
 import store from '@/store'
-const netResult = []
 export default {
   name: 'signDetail',
   store,
-  netResult,
   async created () {
     document.title = '签到详情'
-    // const paramId = this.$route.query.id
-    const paramId = '3'
+    const paramId = this.$route.query.id
+    // const paramId = '3'
     let res = []
     res = await this.$Http.getSignDetail(paramId, {
       headers: {
@@ -48,15 +46,16 @@ export default {
       }
     })
     console.log(res)
+    this.netResult = []
     for (let i = 0; i < res.length; i++) {
-      netResult.push(res[i].stuName)
+      this.netResult.push(res[i].stuName)
     }
   },
   data () {
     return {
       signTitle: 'Default',
       abc: 123,
-      netResult
+      netResult: []
     }
   },
   methods: {

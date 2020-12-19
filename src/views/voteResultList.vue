@@ -8,16 +8,16 @@
   </div>
   <div class="voteList">
     <a-list item-layout="horizontal" :data-source="listItemData" style="margin: 10px">
-      <a-list-item slot="renderItem" slot-scope="item, index">
+      <a-list-item slot="renderItem" slot-scope="item">
         <a-list-item-meta
-          :description="item.time"
-          @click="gotoVote(index)"
+          :description="item.newDescription"
+          @click="gotoVote(item.vid)"
         >
-          <div slot="title">{{ item.title }}</div>
+          <div slot="title">{{ item.theme }}</div>
           <a-avatar
             shape="square"
             slot="avatar"
-            :src="vLogo"
+            icon="pie-chart"
           />
         </a-list-item-meta>
       </a-list-item>
@@ -28,36 +28,30 @@
 
 <script>
 import store from '@/store'
+import moment from 'moment'
 export default {
   name: 'voteResultList',
   store,
   data () {
     return {
-      vLogo: require('../assets/logo.png'),
-      listItemData: [{
-        title: '投票主题一',
-        time: '2021-2-1',
-        id: '0'
-      },
-      {
-        title: '投票主题二',
-        time: '2099-2-1',
-        id: '1'
-      },
-      {
-        title: '投票主题三',
-        time: '2921-12-31',
-        id: '2'
-      },
-      {
-        title: '投票主题四',
-        time: '3021-5-21',
-        id: '3'
-      }]
+      listItemData: []
     }
   },
-  created () {
+  async created () {
     document.title = '投票结果'
+    const teacherID = store.state.teacherTID
+    let res = []
+    res = await this.$Http.getVoteList(teacherID, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    console.log(res)
+    for (let i = 0; i < res.length; i++) {
+      res[i].releaseTime = moment(res[i].releaseTime).format('YYYY-MM-DD HH:mm:ss')
+      res[i].newDescription = '发布时间：' + res[i].releaseTime
+    }
+    this.listItemData = res
   },
   methods: {
     gotoVote (vid) {

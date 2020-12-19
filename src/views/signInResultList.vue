@@ -9,16 +9,16 @@
     </div>
     <div class="voteList">
       <a-list item-layout="horizontal" :data-source="listItemData" style="margin: 10px">
-        <a-list-item slot="renderItem" slot-scope="item, index">
+        <a-list-item slot="renderItem" slot-scope="item">
           <a-list-item-meta
-            :description="item.time"
-            @click="gotoVote(index)"
+            :description="item.newDescription"
+            @click="gotoVote(item.cid)"
           >
             <div slot="title">{{ item.title }}</div>
             <a-avatar
               shape="square"
               slot="avatar"
-              :src="vLogo"
+              icon="pushpin"
             />
           </a-list-item-meta>
         </a-list-item>
@@ -30,36 +30,34 @@
 
 <script>
 import store from '@/store'
+import moment from 'moment'
 export default {
   name: 'signInResultList',
   store,
+  moment,
+  async created () {
+    document.title = '签到列表'
+    // const teacherID = store.state.teacherTID
+    const teacherID = store.state.teacherTID
+    let res = []
+    res = await this.$Http.getSignList(teacherID, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    console.log(res)
+    for (let i = 0; i < res.length; i++) {
+      res[i].startTime = moment(res[i].startTime).format('YYYY-MM-DD HH:mm:ss')
+      res[i].endTime = moment(res[i].endTime).format('YYYY-MM-DD HH:mm:ss')
+      res[i].newDescription = '开始时间：' + res[i].startTime + ' ~ 结束时间：' + res[i].endTime
+    }
+    this.listItemData = res
+  },
   data () {
     return {
-      vLogo: require('../assets/logo.png'),
-      listItemData: [{
-        title: '签到主题一',
-        time: '2021-2-1',
-        id: '0'
-      },
-      {
-        title: '签到主题二',
-        time: '2099-2-1',
-        id: '1'
-      },
-      {
-        title: '签到主题三',
-        time: '2921-12-31',
-        id: '2'
-      },
-      {
-        title: '签到主题四',
-        time: '3021-5-21',
-        id: '3'
-      }]
+      // vLogo: require('../assets/logo.png'),
+      listItemData: []
     }
-  },
-  created () {
-    document.title = '签到结果'
   },
   methods: {
     gotoVote (sid) {

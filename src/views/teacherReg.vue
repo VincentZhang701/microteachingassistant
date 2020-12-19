@@ -14,17 +14,6 @@
         <a-form-item>
           <a-input
             v-decorator="[
-          'userName',
-          { rules: [{ required: true, message: '请输入用户名!' }] },
-        ]"
-            placeholder="用户名"
-          >
-            <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
-          </a-input>
-        </a-form-item>
-        <a-form-item>
-          <a-input
-            v-decorator="[
           'teacherName',
           { rules: [{ required: true, message: '请输入姓名!' }] },
         ]"
@@ -106,7 +95,6 @@
 <script>
 // @ is an alias to /src
 import store from '@/store'
-import axios from 'axios'
 export default {
   store,
   name: 'teacherReg',
@@ -121,24 +109,17 @@ export default {
       e.preventDefault()
       this.form.validateFields(async (err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values)
           const teacherData = {
             name: values.teacherName,
             password: values.password,
             email: values.userEmail
           }
-          let flag = true
-          await axios.post('http://localhost:9090/Teacher/createTeacher', teacherData)
-            .then((r) => { console.log(r) })
-            .catch((e) => {
-              this.$message.error('用户已存在')
-              flag = false
-              console.log(flag)
-            })
-          if (flag === true) {
-            this.$message.success('注册成功')
-            this.$router.push('/log_in')
-          }
+          const res = await this.$Http.reG(teacherData, {})
+          console.log(res)
+          this.$message.success('注册成功')
+          await this.$router.push('/log_in')
+        } else {
+          this.$message.error('注册失败')
         }
       })
     },
@@ -149,7 +130,7 @@ export default {
     compareToFirstPassword (rule, value, callback) {
       const form = this.form
       if (value && value !== form.getFieldValue('password')) {
-        const aPrompt = 'Two passwords that you enter is inconsistent!'
+        const aPrompt = '两次输入密码不一致!'
         callback(aPrompt)
       } else {
         callback()
