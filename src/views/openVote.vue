@@ -5,7 +5,7 @@
     </div>
     <div>
       <a-form :form="form" @submit="handleSubmit">
-        <a-form-item label="主题" :required="false" v-bind="formItemLayout">
+        <a-form-item v-bind="formItemLayout" :required="false" label="主题">
           <a-input
             v-decorator="[
           `theme`,
@@ -48,19 +48,20 @@
           />
           <a-icon
             v-if="form.getFieldValue('keys').length > 1"
+            :disabled="form.getFieldValue('keys').length === 1"
             class="dynamic-delete-button"
             type="minus-circle-o"
-            :disabled="form.getFieldValue('keys').length === 1"
             @click="() => remove(k)"
           />
         </a-form-item>
         <a-form-item v-bind="formItemLayoutWithOutLabel">
-          <a-button type="dashed" style="width: 60%" @click="add">
-            <a-icon type="plus" /> 选项
+          <a-button style="width: 60%" type="dashed" @click="add">
+            <a-icon type="plus"/>
+            选项
           </a-button>
         </a-form-item>
         <a-form-item v-bind="formItemLayoutWithOutLabel">
-          <a-button type="primary" html-type="submit">
+          <a-button html-type="submit" type="primary">
             提交
           </a-button>
         </a-form-item>
@@ -73,6 +74,7 @@
 import store from '@/store'
 import moment from 'moment'
 import NavigationPane from '@/views/NavigationPane'
+
 let id = 0
 export default {
   name: 'openVote',
@@ -92,19 +94,32 @@ export default {
       },
       formItemLayoutWithOutLabel: {
         wrapperCol: {
-          xs: { span: 24, offset: 0 },
-          sm: { span: 20, offset: 4 }
+          xs: {
+            span: 24,
+            offset: 0
+          },
+          sm: {
+            span: 20,
+            offset: 4
+          }
         }
       }
     }
   },
   created () {
+    if (store.state.isLoggedIn === false) {
+      this.$message.error('未登录，请先登录！')
+      this.$router.push('/log_in')
+    }
     document.title = '发布投票'
     store.commit('changeTitle', '发布投票')
   },
   beforeCreate () {
     this.form = this.$form.createForm(this, { name: 'vote_form' })
-    this.form.getFieldDecorator('keys', { initialValue: [], preserve: true })
+    this.form.getFieldDecorator('keys', {
+      initialValue: [],
+      preserve: true
+    })
   },
   methods: {
     remove (k) {
@@ -149,7 +164,10 @@ export default {
               releaseTime: moment(Date.now()).format('yyyy-MM-DD') + 'T' + moment(Date.now()).format('HH:mm:ss') + '.000'
             }
           }
-          const { keys, names } = values
+          const {
+            keys,
+            names
+          } = values
           let optionList = []
           optionList = keys.map(key => names[key])
           for (let i = 0; i < optionList.length; i++) {
@@ -158,8 +176,8 @@ export default {
             })
           }
           const res = await this.$Http.createVote(postData, {})
-          console.log('Received values of form: ', postData)
-          console.log(res)
+          store.commit('changeQRCode', 'http://localhost:8080/vote?id=' + res)
+          await this.$router.push('/qrCode')
         }
       })
     }
@@ -176,9 +194,11 @@ export default {
   color: #999;
   transition: all 0.3s;
 }
+
 .dynamic-delete-button:hover {
   color: #777;
 }
+
 .dynamic-delete-button[disabled] {
   cursor: not-allowed;
   opacity: 0.5;

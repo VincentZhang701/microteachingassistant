@@ -1,43 +1,44 @@
 <template>
   <div>
-  <div class="header">
-    <a-page-header title="签到" sub-title="微助教" style="background: lavender"/>
-  </div>
-  <div>
-    <p>签到主题</p>
-    <a-form
-      :form="form"
-      @submit="handleSubmit"
-    >
-      <a-form-item>
-        <a-input
-          v-decorator="[
+    <div class="header">
+      <a-page-header style="background: lavender" sub-title="微助教" title="签到"/>
+    </div>
+    <div>
+      <p>签到主题</p>
+      <p>{{ this.signTitle }}</p>
+      <a-form
+        :form="form"
+        @submit="handleSubmit"
+      >
+        <a-form-item>
+          <a-input
+            v-decorator="[
           'stuID',
           { rules: [{ required: true, message: '请输入学号!' }] },
         ]"
-          placeholder="学号"
-        >
-          <a-icon slot="prefix" type="contacts" style="color: rgba(0,0,0,.25)" />
-        </a-input>
-      </a-form-item>
-      <a-form-item>
-        <a-input
-          v-decorator="[
+            placeholder="学号"
+          >
+            <a-icon slot="prefix" style="color: rgba(0,0,0,.25)" type="contacts"/>
+          </a-input>
+        </a-form-item>
+        <a-form-item>
+          <a-input
+            v-decorator="[
           'stuName',
           { rules: [{ required: true, message: '请输入姓名!' }] },
         ]"
-          placeholder="姓名"
-        >
-          <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
-        </a-input>
-      </a-form-item>
-      <a-form-item>
-        <a-button type="primary" html-type="submit" class="login-form-button">
-          签到
-        </a-button>
-      </a-form-item>
-    </a-form>
-  </div>
+            placeholder="姓名"
+          >
+            <a-icon slot="prefix" style="color: rgba(0,0,0,.25)" type="user"/>
+          </a-input>
+        </a-form-item>
+        <a-form-item>
+          <a-button class="login-form-button" html-type="submit" type="primary">
+            签到
+          </a-button>
+        </a-form-item>
+      </a-form>
+    </div>
   </div>
 </template>
 
@@ -48,12 +49,19 @@ export default {
   name: 'stuSignIn',
   data () {
     return {
-      signInID: null
+      signInID: null,
+      signTitle: null
     }
   },
-  created () {
+  async created () {
     document.title = '签到'
     this.signInID = this.$route.query.id
+    this.signTitle = await this.$Http.findSignName(this.signInID, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    this.signTitle = this.signTitle.title
   },
   beforeCreate () {
     this.form = this.$form.createForm(this, { name: 'normal_login' })

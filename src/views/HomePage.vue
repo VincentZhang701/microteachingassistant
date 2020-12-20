@@ -9,13 +9,13 @@
       </h1>
     </div>
     <div class="buttons" style="text-align: center;">
-      <a-button v-if="!logIsIn" type="primary" @click="_logIn()" style="margin: 10px 10px 10px 10px">
+      <a-button v-if="!logIsIn" style="margin: 10px 10px 10px 10px" type="primary" @click="_logIn()">
         登录
       </a-button>
-      <a-button v-if="!logIsIn" @click="_reg()" style="margin: 10px 10px 10px 10px">
+      <a-button v-if="!logIsIn" style="margin: 10px 10px 10px 10px" @click="_reg()">
         注册
       </a-button>
-      <a-button v-if="logIsIn" type="primary" @click="_goHome()" style="margin: 10px 10px 10px 10px">
+      <a-button v-if="logIsIn" style="margin: 10px 10px 10px 10px" type="primary" @click="_goHome()">
         我的主页
       </a-button>
     </div>
@@ -26,6 +26,7 @@
 // @ is an alias to /src
 import store from '@/store'
 import NavigationPane from '@/views/NavigationPane'
+
 export default {
   components: { NavigationPane },
   store,
@@ -54,19 +55,20 @@ export default {
 </script>
 
 <style scoped>
-.content{
+.content {
   background-repeat: no-repeat;
-  height:300px;
+  height: 300px;
   width: 100%;
   position: relative;
   display: flex;
   justify-content: center;
   flex-direction: row;
 }
-.content>h1{
-  height:300px;
+
+.content > h1 {
+  height: 300px;
   width: 100%;
-  background-color: rgb(0,0,0,.15);
+  background-color: rgb(0, 0, 0, .15);
   backdrop-filter: blur(5px);
 }
 </style>

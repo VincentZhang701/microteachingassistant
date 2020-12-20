@@ -74,6 +74,11 @@ const routes = [
     path: '/myMsg',
     name: 'myMsg',
     component: () => import('../views/teacherMsg')
+  },
+  {
+    path: '/qrCode',
+    name: 'qrCode',
+    component: () => import('../views/qrCode')
   }
 ]
 

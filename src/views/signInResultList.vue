@@ -1,40 +1,44 @@
 <template>
-<div>
   <div>
-    <div class="header">
-      <navigation-pane></navigation-pane>
-    </div>
-    <div class="voteList">
-      <a-list item-layout="horizontal" :data-source="listItemData" style="margin: 10px">
-        <a-list-item slot="renderItem" slot-scope="item">
-          <a-list-item-meta
-            :description="item.newDescription"
-            @click="gotoVote(item.cid)"
-          >
-            <div slot="title">{{ item.title }}</div>
-            <a-avatar
-              shape="square"
-              slot="avatar"
-              icon="pushpin"
-            />
-          </a-list-item-meta>
-        </a-list-item>
-      </a-list>
+    <div>
+      <div class="header">
+        <navigation-pane></navigation-pane>
+      </div>
+      <div class="voteList">
+        <a-list :data-source="listItemData" item-layout="horizontal" style="margin: 10px">
+          <a-list-item slot="renderItem" slot-scope="item">
+            <a-list-item-meta
+              :description="item.newDescription"
+              @click="gotoVote(item.cid)"
+            >
+              <div slot="title">{{ item.title }}</div>
+              <a-avatar
+                slot="avatar"
+                icon="pushpin"
+                shape="square"
+              />
+            </a-list-item-meta>
+          </a-list-item>
+        </a-list>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
 import store from '@/store'
 import moment from 'moment'
 import NavigationPane from '@/views/NavigationPane'
+
 export default {
   name: 'signInResultList',
   components: { NavigationPane },
   store,
   moment,
   async created () {
+    if (store.state.isLoggedIn === false) {
+      await this.$router.push('/log_in')
+    }
     document.title = '签到列表'
     store.commit('changeTitle', '已发布的签到')
     const teacherID = store.state.teacherTID
@@ -44,7 +48,7 @@ export default {
         'Content-Type': 'application/json'
       }
     })
-    console.log(res)
+
     for (let i = 0; i < res.length; i++) {
       res[i].startTime = moment(res[i].startTime).format('YYYY-MM-DD HH:mm:ss')
       res[i].endTime = moment(res[i].endTime).format('YYYY-MM-DD HH:mm:ss')

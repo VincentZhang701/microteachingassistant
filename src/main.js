@@ -5,11 +5,13 @@ import store from './store'
 import Http from '@/services/Http'
 
 // import ant design
-import { Table, List, Button, Avatar, message, PageHeader, Form, Input, Icon, Checkbox, Select, TimePicker, Radio } from 'ant-design-vue'
+import { Tag, Table, List, Button, Avatar, message, PageHeader, Form, Input, Icon, Checkbox, Select, TimePicker, Radio } from 'ant-design-vue'
+import md5 from 'js-md5'
 
 Vue.config.productionTip = false
 
 Vue.component(Button.name, Button)
+Vue.component(Tag.name, Tag)
 Vue.component(Avatar.name, Avatar)
 Vue.component(PageHeader.name, PageHeader)
 Vue.component(Form.name, Form)
@@ -31,6 +33,7 @@ Vue.component(Table.name, Table)
 
 Vue.prototype.$message = message
 Vue.prototype.$Http = Http
+Vue.prototype.$md5 = md5
 
 message.config({
   duration: 2, // 持续时间

@@ -11,7 +11,6 @@ const Http = {}
 
 for (const key in myApi) {
   const api = myApi[key]
-  console.log('api: ' + api + ', key: ' + key)
   Http[key] = async (params, config = {}) => {
     let response = {}
     try {
@@ -28,8 +27,9 @@ instance.interceptors.request.use(
     message.info('请求中......')
     return config
   },
-  () => {
+  err => {
     message.error('请求错误，请稍后重试')
+    return err
   }
 )
 
@@ -38,8 +38,9 @@ instance.interceptors.response.use(
     message.success('请求成功')
     return res.data
   },
-  () => {
+  err => {
     message.error('请求错误，请稍后重试')
+    return err
   })
 
 export default Http

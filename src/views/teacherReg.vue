@@ -16,18 +16,27 @@
         ]"
             placeholder="姓名"
           >
-            <a-icon slot="prefix" type="contacts" style="color: rgba(0,0,0,.25)" />
+            <a-icon slot="prefix" style="color: rgba(0,0,0,.25)" type="contacts"/>
           </a-input>
         </a-form-item>
         <a-form-item>
           <a-input
             v-decorator="[
-          'userEmail',
-          { rules: [{ required: true, message: '请输入邮箱!' }] },
-        ]"
+            'userEmail',
+            {
+            rules: [{
+                type: 'email',
+                message: '邮箱格式不正确!',
+              },
+              {
+                required: true,
+                message: '请输入邮箱!'
+              }]
+            },
+          ]"
             placeholder="邮箱"
           >
-            <a-icon slot="prefix" type="mail" style="color: rgba(0,0,0,.25)" />
+            <a-icon slot="prefix" style="color: rgba(0,0,0,.25)" type="mail"/>
           </a-input>
         </a-form-item>
         <a-form-item has-feedback>
@@ -41,15 +50,15 @@
                 message: '请输入密码!',
               },
               {
-                validator: validateToNextPassword,
+                validator: validatePassword,
               },
             ],
           },
         ]"
-            type="password"
             placeholder="密码"
+            type="password"
           >
-            <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)" />
+            <a-icon slot="prefix" style="color: rgba(0,0,0,.25)" type="lock"/>
           </a-input>
         </a-form-item>
         <a-form-item has-feedback>
@@ -68,15 +77,15 @@
             ],
           },
         ]"
-            type="password"
             placeholder="确认密码"
+            type="password"
             @blur="handleConfirmBlur"
           >
-            <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)" />
+            <a-icon slot="prefix" style="color: rgba(0,0,0,.25)" type="lock"/>
           </a-input>
         </a-form-item>
         <a-form-item>
-          <a-button type="primary" html-type="submit" class="login-form-button">
+          <a-button class="login-form-button" html-type="submit" type="primary">
             注册
           </a-button>
           已有帐号？
@@ -93,6 +102,7 @@
 // @ is an alias to /src
 import store from '@/store'
 import NavigationPane from '@/views/NavigationPane'
+
 export default {
   components: { NavigationPane },
   store,
@@ -101,6 +111,9 @@ export default {
     this.form = this.$form.createForm(this, { name: 'register' })
   },
   created () {
+    if (store.state.isLoggedIn === true) {
+      this.$router.push('/')
+    }
     document.title = '注册!'
     store.commit('changeTitle', '注册')
   },
@@ -111,15 +124,16 @@ export default {
         if (!err) {
           const teacherData = {
             name: values.teacherName,
-            password: values.password,
+            password: this.$md5(values.password),
             email: values.userEmail
           }
           const res = await this.$Http.reG(teacherData, {})
-          console.log(res)
-          this.$message.success('注册成功')
-          await this.$router.push('/log_in')
-        } else {
-          this.$message.error('注册失败')
+          if (res.response !== undefined) {
+            this.$message.error('注册失败')
+          } else {
+            this.$message.success('注册成功')
+            await this.$router.push('/log_in')
+          }
         }
       })
     },
@@ -136,8 +150,15 @@ export default {
         callback()
       }
     },
-    validateToNextPassword (rule, value, callback) {
+    validatePassword (rule, value, callback) {
       const form = this.form
+      if (value.length <= 8) {
+        const aPrompt = '密码长度太短，须大于8字符!'
+        callback(aPrompt)
+      } else if (value.length >= 16) {
+        const aPrompt = '密码太长，须小于16字符!'
+        callback(aPrompt)
+      }
       if (value && this.confirmDirty) {
         form.validateFields(['confirm'], { force: true })
       }
@@ -154,6 +175,7 @@ export default {
   margin: auto;
   width: 100%;
 }
+
 #components-login .login-form-button {
   width: 100%;
 }

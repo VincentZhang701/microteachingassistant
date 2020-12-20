@@ -10,7 +10,8 @@ export default new Vuex.Store({
     isLoggedIn: false,
     teacherName: 'Default',
     teacherTID: null,
-    pageTitle: null
+    pageTitle: null,
+    qrCode: null
   },
   mutations: {
     changeLoggingStatus (state, value) {
@@ -24,6 +25,9 @@ export default new Vuex.Store({
     },
     changeTitle (state, value) {
       state.pageTitle = value
+    },
+    changeQRCode (state, value) {
+      state.qrCode = value
     }
   },
   actions: {

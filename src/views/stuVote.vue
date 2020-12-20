@@ -1,14 +1,16 @@
 <template>
   <div>
-  <div class="header">
-    <a-page-header title="投票" sub-title="微助教" style="background: lavender"/>
-  </div>
-  <div>
-    <p>投票主题</p>
-  </div>
-  <div>
-    <a-table rowKey="choice" :columns="columns" :data-source="data" :row-selection="rowSelection" :showHeader="false" :pagination="false"/>
-  </div>
+    <div class="header">
+      <a-page-header style="background: lavender" sub-title="微助教" title="投票"/>
+    </div>
+    <div>
+      <p>投票主题</p>
+      <p>{{ this.voteTitle }}</p>
+    </div>
+    <div>
+      <a-table :columns="columns" :data-source="data" :pagination="false" :row-selection="rowSelection" :showHeader="false"
+               rowKey="choice"/>
+    </div>
     <a-form
       :form="form"
       @submit="handleSubmit"
@@ -21,11 +23,11 @@
         ]"
           placeholder="姓名"
         >
-          <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
+          <a-icon slot="prefix" style="color: rgba(0,0,0,.25)" type="user"/>
         </a-input>
       </a-form-item>
       <a-form-item>
-        <a-button type="primary" html-type="submit" class="login-form-button">
+        <a-button class="login-form-button" html-type="submit" type="primary">
           投票
         </a-button>
       </a-form-item>
@@ -45,10 +47,11 @@ export default {
       ],
       paramId: null,
       data: [],
+      voteTitle: null,
       selectedData: [],
       rowSelection: {
         onChange: (selectedRowKeys) => {
-          // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRowKeys)
+          // (`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRowKeys)
           this.selectedData = selectedRowKeys
         }
       }
@@ -66,7 +69,12 @@ export default {
       }
     })
     this.data = res
-    console.log(res)
+    this.voteTitle = await this.$Http.findVoteName(this.paramId, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    this.voteTitle = this.voteTitle.theme
   },
   methods: {
     handleSubmit (e) {
@@ -81,9 +89,7 @@ export default {
               choice: this.selectedData[i]
             })
           }
-          const res = await this.$Http.stuVote(postData, {})
-          console.log(res)
-          console.log(postData)
+          await this.$Http.stuVote(postData, {})
         }
       })
     }

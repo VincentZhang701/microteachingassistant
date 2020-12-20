@@ -1,35 +1,42 @@
 <template>
-<div>
-  <div class="header">
-    <a-page-header title="投票结果" sub-title="微助教" style="background: lavender">
-    </a-page-header>
+  <div>
+    <div class="header">
+      <a-page-header style="background: lavender" sub-title="微助教" title="投票结果">
+      </a-page-header>
+    </div>
+    <div class="charts">
+      <div id="chartPie" class="pie-wrap"></div>
+    </div>
   </div>
-  <div class="charts">
-    <div id="chartPie" class="pie-wrap"></div>
-  </div>
-</div>
 </template>
 
 <script>
 import store from '@/store'
 import * as echarts from 'echarts'
+
 require('echarts/theme/macarons2')// 引入主题
 export default {
   name: 'voteDetail',
   store,
   data () {
     return {
-      voteTitle: '测试用例',
+      voteTitle: null,
       voteData: [],
-      chartPie: null
+      chartPie: null,
+      paramId: null
     }
   },
   async created () {
     document.title = '投票详情'
-    const paramId = this.$route.query.id
-    this.$message.info(paramId)
+    this.paramId = this.$route.query.id
+    this.voteTitle = await this.$Http.findVoteName(this.paramId, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    this.voteTitle = this.voteTitle.theme
     let res = []
-    res = await this.$Http.getVoteDetail(paramId, {
+    res = await this.$Http.getVoteDetail(this.paramId, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -40,8 +47,6 @@ export default {
         value: res[i].count
       })
     }
-    console.log(res)
-    console.log(this.voteData)
     this.$nextTick(() => {
       this.drawPieChart()
     })
@@ -95,8 +100,8 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.pie-wrap{
-  width:100%;
-  height:400px;
+.pie-wrap {
+  width: 100%;
+  height: 400px;
 }
 </style>

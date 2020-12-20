@@ -54,6 +54,18 @@ const myApi = {
   getVoteOptions: {
     method: 'post',
     url: '/VoteOption/findOneVoteOptions'
+  },
+  teacherLogIn: {
+    method: 'post',
+    url: '/Teacher/teacherLogin'
+  },
+  findVoteName: {
+    method: 'post',
+    url: '/Vote/findOne'
+  },
+  findSignName: {
+    method: 'post',
+    url: '/CheckIn_Release/findOne'
   }
 }
 export default myApi
