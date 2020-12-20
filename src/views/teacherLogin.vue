@@ -1,10 +1,7 @@
 <template>
   <div>
     <div class="header">
-      <a-page-header title="登录" sub-title="微助教" style="background: lavender">
-        <a-avatar v-if="!logIsIn" slot="extra">未登录</a-avatar>
-        <a-avatar v-if="logIsIn" slot="extra" style="background: green">已登录</a-avatar>
-      </a-page-header>
+      <navigation-pane></navigation-pane>
     </div>
     <div id="components-login" class="login-form">
       <a-form
@@ -51,7 +48,9 @@
 <script>
 // @ is an alias to /src
 import store from '@/store'
+import NavigationPane from '@/views/NavigationPane'
 export default {
+  components: { NavigationPane },
   store,
   name: 'teacherLogin',
   beforeCreate () {
@@ -64,6 +63,7 @@ export default {
   },
   created () {
     document.title = '登录!'
+    store.commit('changeTitle', '登录')
   },
   methods: {
     handleSubmit (e) {
@@ -90,11 +90,6 @@ export default {
           console.log(res)
         }
       })
-    }
-  },
-  computed: {
-    logIsIn () {
-      return store.state.isLoggedIn
     }
   }
 }

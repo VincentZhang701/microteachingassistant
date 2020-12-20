@@ -2,10 +2,7 @@
 <div>
   <div>
     <div class="header">
-      <a-page-header title="签到结果" sub-title="微助教" style="background: #e6e6fa">
-        <a-avatar v-if="!logIsIn" slot="extra">未登录</a-avatar>
-        <a-avatar v-if="logIsIn" slot="extra" style="background: green">已登录</a-avatar>
-      </a-page-header>
+      <navigation-pane></navigation-pane>
     </div>
     <div class="voteList">
       <a-list item-layout="horizontal" :data-source="listItemData" style="margin: 10px">
@@ -31,13 +28,15 @@
 <script>
 import store from '@/store'
 import moment from 'moment'
+import NavigationPane from '@/views/NavigationPane'
 export default {
   name: 'signInResultList',
+  components: { NavigationPane },
   store,
   moment,
   async created () {
     document.title = '签到列表'
-    // const teacherID = store.state.teacherTID
+    store.commit('changeTitle', '已发布的签到')
     const teacherID = store.state.teacherTID
     let res = []
     res = await this.$Http.getSignList(teacherID, {
@@ -67,11 +66,6 @@ export default {
           id: sid
         }
       })
-    }
-  },
-  computed: {
-    logIsIn () {
-      return store.state.isLoggedIn
     }
   }
 }

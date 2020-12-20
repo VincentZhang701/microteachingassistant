@@ -2,8 +2,6 @@
 <div>
   <div class="header">
     <a-page-header title="投票结果" sub-title="微助教" style="background: lavender">
-      <a-avatar v-if="!logIsIn" slot="extra">未登录</a-avatar>
-      <a-avatar v-if="logIsIn" slot="extra" style="background: green">已登录</a-avatar>
     </a-page-header>
   </div>
   <div class="charts">
@@ -25,11 +23,6 @@ export default {
       voteData: [],
       chartPie: null
     }
-  },
-  mounted () {
-    // this.$nextTick(() => {
-    //   this.drawPieChart()
-    // })
   },
   async created () {
     document.title = '投票详情'
@@ -96,11 +89,6 @@ export default {
           }
         ]
       })
-    }
-  },
-  computed: {
-    logIsIn () {
-      return store.state.isLoggedIn
     }
   }
 }

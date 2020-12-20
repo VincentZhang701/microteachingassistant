@@ -1,10 +1,7 @@
 <template>
   <div>
     <div class="header">
-      <a-page-header title="发布投票" sub-title="微助教" style="background: lavender">
-        <a-avatar v-if="!logIsIn" slot="extra">未登录</a-avatar>
-        <a-avatar v-if="logIsIn" slot="extra" style="background: green">已登录</a-avatar>
-      </a-page-header>
+      <NavigationPane></NavigationPane>
     </div>
     <div>
       <a-form :form="form" @submit="handleSubmit">
@@ -75,15 +72,12 @@
 <script>
 import store from '@/store'
 import moment from 'moment'
+import NavigationPane from '@/views/NavigationPane'
 let id = 0
 export default {
   name: 'openVote',
+  components: { NavigationPane },
   store,
-  computed: {
-    logIsIn () {
-      return store.state.isLoggedIn
-    }
-  },
   data () {
     return {
       formItemLayout: {
@@ -106,6 +100,7 @@ export default {
   },
   created () {
     document.title = '发布投票'
+    store.commit('changeTitle', '发布投票')
   },
   beforeCreate () {
     this.form = this.$form.createForm(this, { name: 'vote_form' })

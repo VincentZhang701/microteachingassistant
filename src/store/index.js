@@ -1,13 +1,16 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-Vue.use(Vuex)
+import persistedState from 'vuex-persistedstate'
 
+Vue.use(Vuex)
 export default new Vuex.Store({
+  plugins: [persistedState()],
   state: {
     isLoggedIn: false,
     teacherName: 'Default',
-    teacherTID: null
+    teacherTID: null,
+    pageTitle: null
   },
   mutations: {
     changeLoggingStatus (state, value) {
@@ -18,6 +21,9 @@ export default new Vuex.Store({
     },
     changeTeacherID (state, value) {
       state.teacherTID = value
+    },
+    changeTitle (state, value) {
+      state.pageTitle = value
     }
   },
   actions: {

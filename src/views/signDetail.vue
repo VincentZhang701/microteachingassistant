@@ -1,10 +1,7 @@
 <template>
 <div>
   <div class="header">
-    <a-page-header title="签到结果" sub-title="微助教" style="background: #e6e6fa">
-      <a-avatar v-if="!logIsIn" slot="extra">未登录</a-avatar>
-      <a-avatar v-if="logIsIn" slot="extra" style="background: green">已登录</a-avatar>
-    </a-page-header>
+    <NavigationPane></NavigationPane>
   </div>
   <div>
     <p>签到主题</p>
@@ -32,11 +29,14 @@
 
 <script>
 import store from '@/store'
+import NavigationPane from '@/views/NavigationPane'
 export default {
   name: 'signDetail',
+  components: { NavigationPane },
   store,
   async created () {
     document.title = '签到详情'
+    store.commit('changeTitle', '签到详情')
     const paramId = this.$route.query.id
     // const paramId = '3'
     let res = []
@@ -61,11 +61,6 @@ export default {
   methods: {
     refPage () {
       this.$router.go(0)
-    }
-  },
-  computed: {
-    logIsIn () {
-      return store.state.isLoggedIn
     }
   }
 }

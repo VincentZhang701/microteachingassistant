@@ -1,10 +1,7 @@
 <template>
 <div>
   <div class="header">
-    <a-page-header title="发布签到" sub-title="微助教" style="background: lavender">
-      <a-avatar v-if="!logIsIn" slot="extra">未登录</a-avatar>
-      <a-avatar v-if="logIsIn" slot="extra" style="background: green">已登录</a-avatar>
-    </a-page-header>
+    <NavigationPane></NavigationPane>
   </div>
   <div class="content">
     <a-form v-bind="formItemLayout" :form="form" @submit="handleSubmit">
@@ -24,7 +21,7 @@
       }"
       >
         <a-button type="primary" html-type="submit">
-          Submit
+          提交
         </a-button>
       </a-form-item>
     </a-form>
@@ -35,14 +32,11 @@
 <script>
 import store from '@/store'
 import moment from 'moment'
+import NavigationPane from '@/views/NavigationPane'
 export default {
   name: 'openSignIn',
+  components: { NavigationPane },
   store,
-  computed: {
-    logIsIn () {
-      return store.state.isLoggedIn
-    }
-  },
   data () {
     return {
       formItemLayout: {
@@ -65,6 +59,7 @@ export default {
   },
   created () {
     document.title = '发布签到'
+    store.commit('changeTitle', '发布签到')
   },
   beforeCreate () {
     this.form = this.$form.createForm(this, { name: 'signIn_form' })

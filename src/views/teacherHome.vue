@@ -1,10 +1,7 @@
 <template>
 <div>
   <div class="header">
-    <a-page-header title="主页" sub-title="微助教" style="background: lavender">
-      <a-avatar v-if="!logIsIn" slot="extra">未登录</a-avatar>
-      <a-avatar v-if="logIsIn" slot="extra" style="background: green">已登录</a-avatar>
-    </a-page-header>
+    <navigation-pane></navigation-pane>
   </div>
   <div class="Hello">
     <h2 style="text-align: center; margin-top: 50px; margin-bottom: 60px"
@@ -13,7 +10,7 @@
                     nowTime<15?'中午好':
                     nowTime<19?'下午好':
                     '晚上好'
-                    )">{{greeting}},{{teacherWhatName}}</h2>
+                    )">{{greeting}},{{this.teacherWhatName}}</h2>
   </div>
   <div class='content'>
     <a-button @click="goVote()" type="primary" style="width: 240px;height: 43px;margin: 5px">发布投票</a-button>
@@ -28,15 +25,19 @@
 
 <script>
 import store from '@/store'
+import NavigationPane from '@/views/NavigationPane'
 export default {
   name: 'teacherHome',
+  components: { NavigationPane },
   created () {
     document.title = '主页!'
+    store.commit('changeTitle', '主页')
   },
   data () {
     return {
       greeting: 'Hello',
-      nowTime: new Date().getHours()
+      nowTime: new Date().getHours(),
+      teacherWhatName: store.state.teacherName
     }
   },
   methods: {
@@ -51,14 +52,6 @@ export default {
     },
     goSignResult () {
       this.$router.push('/signResultList')
-    }
-  },
-  computed: {
-    logIsIn () {
-      return store.state.isLoggedIn
-    },
-    teacherWhatName () {
-      return store.state.teacherName
     }
   }
 }

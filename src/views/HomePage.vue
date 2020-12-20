@@ -1,10 +1,7 @@
 <template>
   <div>
     <div class="header">
-      <a-page-header title="欢迎使用" sub-title="微助教" style="background: lavender">
-        <a-avatar v-if="!logIsIn" slot="extra">未登录</a-avatar>
-        <a-avatar v-if="logIsIn" slot="extra" style="background: green">已登录</a-avatar>
-      </a-page-header>
+      <NavigationPane id='0'></NavigationPane>
     </div>
     <div class="content">
       <h1 style="text-align: center; margin-top: 50px; margin-bottom: 60px">
@@ -28,11 +25,19 @@
 <script>
 // @ is an alias to /src
 import store from '@/store'
+import NavigationPane from '@/views/NavigationPane'
 export default {
+  components: { NavigationPane },
   store,
   name: 'HomePage',
+  data () {
+    return {
+      logIsIn: store.state.isLoggedIn
+    }
+  },
   created () {
     document.title = '欢迎!'
+    store.commit('changeTitle', '欢迎使用')
   },
   methods: {
     _logIn () {
@@ -44,13 +49,7 @@ export default {
     _goHome () {
       this.$router.push('/myHome')
     }
-  },
-  computed: {
-    logIsIn () {
-      return store.state.isLoggedIn
-    }
   }
-
 }
 </script>
 
