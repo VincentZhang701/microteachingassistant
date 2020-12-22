@@ -4,7 +4,7 @@
       <a-tag v-if="this.logIsIn" slot="extra" color="blue">{{ this.userName }}</a-tag>
       <a-button v-if="this.logIsIn" slot="extra" @click="logOut()">登出</a-button>
       <a-avatar v-if="!this.logIsIn" slot="extra">未登录</a-avatar>
-      <a-avatar v-if="this.logIsIn" slot="extra" style="background: green">已登录</a-avatar>
+      <a-avatar v-if="this.logIsIn" slot="extra" style="background: green">{{userName[0]}}</a-avatar>
     </a-page-header>
   </div>
 </template>

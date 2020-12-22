@@ -55,20 +55,20 @@ export default {
 </script>
 
 <style scoped>
-.content {
-  background-repeat: no-repeat;
-  height: 300px;
-  width: 100%;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-}
+/*.content {*/
+/*  background-repeat: no-repeat;*/
+/*  height: 300px;*/
+/*  width: 100%;*/
+/*  position: relative;*/
+/*  display: flex;*/
+/*  justify-content: center;*/
+/*  flex-direction: row;*/
+/*}*/
 
-.content > h1 {
-  height: 300px;
-  width: 100%;
-  background-color: rgb(0, 0, 0, .15);
-  backdrop-filter: blur(5px);
-}
+/*.content > h1 {*/
+/*  height: 300px;*/
+/*  width: 100%;*/
+/*  background-color: rgb(0, 0, 0, .15);*/
+/*  backdrop-filter: blur(5px);*/
+/*}*/
 </style>

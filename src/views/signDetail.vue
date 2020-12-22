@@ -3,13 +3,13 @@
     <div class="header">
       <NavigationPane></NavigationPane>
     </div>
-    <div>
-      <p>签到主题</p>
-      <p>{{ signTitle }}</p>
+    <div  style="margin: 20px">
+      <h2>签到主题</h2>
+      <h3 style="color: coral;font-weight: bold;font-size: larger">{{ signTitle }}</h3>
       <a-button icon="sync" type="primary" @click="refPage()">刷新</a-button>
     </div>
-    <div>
-      <p>已签到：{{ netResult.length }}</p>
+    <div  style="margin: 20px">
+      <p>已签到：<b>{{ netResult.length }}</b></p>
       <a-list :data-source="netResult" item-layout="horizontal">
         <a-list-item slot="renderItem" slot-scope="item">
           <a-list-item-meta

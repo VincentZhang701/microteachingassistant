@@ -7,6 +7,9 @@
     <div class="charts">
       <div id="chartPie" class="pie-wrap"></div>
     </div>
+    <div class="echarts">
+      <div id="main" style="width: auto;height:400px;"></div>
+    </div>
   </div>
 </template>
 
@@ -23,7 +26,8 @@ export default {
       voteTitle: null,
       voteData: [],
       chartPie: null,
-      paramId: null
+      paramId: null,
+      option: []
     }
   },
   async created () {
@@ -46,9 +50,11 @@ export default {
         name: res[i].choiceName,
         value: res[i].count
       })
+      this.option.push(res[i].choiceName)
     }
     this.$nextTick(() => {
       this.drawPieChart()
+      this.myEcharts()
     })
   },
   methods: {
@@ -73,7 +79,7 @@ export default {
           formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
         legend: {
-          data: this.voteData[name],
+          data: this.option,
           left: 'center',
           top: 'bottom',
           orient: 'horizontal',
@@ -94,6 +100,25 @@ export default {
           }
         ]
       })
+    },
+    myEcharts () {
+      const myChart = echarts.init(document.getElementById('main'))
+      const option = {
+        title: {
+          text: this.voteTitle
+        },
+        tooltip: {},
+        xAxis: {
+          data: this.option
+        },
+        yAxis: {},
+        series: [{
+          name: '选项',
+          type: 'bar',
+          data: this.voteData
+        }]
+      }
+      myChart.setOption(option)
     }
   }
 }
